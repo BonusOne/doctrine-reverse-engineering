@@ -1,0 +1,13 @@
+#includes:
+#    - vendor/phpstan/phpstan-symfony/extension.neon
+parameters:
+    level: max
+    paths:
+        - bin/
+        - src/
+    excludePaths:
+    tmpDir: .tmp
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - identifier: cast.string
+        - identifier: missingType.iterableValue
