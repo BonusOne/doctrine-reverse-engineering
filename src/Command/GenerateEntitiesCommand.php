@@ -132,6 +132,10 @@ final class GenerateEntitiesCommand extends Command
         $io->newLine();
 
         try {
+            $progress = static function (string $table) use ($io): void {
+                $io->writeln(\sprintf('  > Processing table "%s"...', $table));
+            };
+
             $result = $this->generator->generate(
                 $connection,
                 new EntityGeneratorConfig(
@@ -143,7 +147,8 @@ final class GenerateEntitiesCommand extends Command
                     $overwrite,
                     $dryRun,
                     $tables
-                )
+                ),
+                $progress
             );
         } catch (DBALException|\Throwable $exception) {
             $io->error('Generation failed: '.$exception->getMessage());

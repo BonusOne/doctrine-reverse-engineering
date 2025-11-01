@@ -33,7 +33,10 @@ final readonly class EntityGenerator
      *     errors: string[]
      * }
      */
-    public function generate(Connection $connection, EntityGeneratorConfig $config): array
+    /**
+     * @param callable(string):void|null $progressCallback
+     */
+    public function generate(Connection $connection, EntityGeneratorConfig $config, ?callable $progressCallback = null): array
     {
         $result = [
             'entities' => [],
@@ -63,6 +66,10 @@ final readonly class EntityGenerator
         $tables = $this->resolveTablesToProcess($config->tables, $availableTables, $result['errors']);
 
         foreach ($tables as $tableName) {
+            if ($progressCallback !== null) {
+                $progressCallback($tableName);
+            }
+
             try {
                 $columns = $schemaManager->listTableColumns($tableName);
                 $indexes = $schemaManager->listTableIndexes($tableName);
