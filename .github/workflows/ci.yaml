@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request: ~
+
+jobs:
+  quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql
+          coverage: none
+          tools: composer
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: PHP-CS-Fixer (dry-run)
+        run: php vendor/bin/php-cs-fixer fix --verbose --diff --config .php-cs-fixer.dist.php --dry-run
+
+      - name: Rector (dry-run)
+        run: php vendor/bin/rector process -c rector.php --dry-run
+
+      - name: PHPStan
+        run: php vendor/bin/phpstan analyse --verbose --memory-limit=-1 -c phpstan.neon
