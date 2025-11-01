@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$projectDir = getcwd();
+if ($projectDir === false) {
+    fwrite(STDERR, "Failed to determine the current working directory.\n");
+    exit(1);
+}
+
+$console = $projectDir.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console';
+if (!is_file($console)) {
+    fwrite(STDERR, "Unable to find bin/console in the project directory ({$projectDir}).\n");
+    exit(1);
+}
+
+$command = array_merge([PHP_BINARY, $console, 'doctrine:reverse-engineering:generate'], array_slice($argv, 1));
+
+$process = proc_open($command, [
+    0 => STDIN,
+    1 => STDOUT,
+    2 => STDERR,
+], $pipes);
+
+if (!is_resource($process)) {
+    fwrite(STDERR, "Failed to launch the Symfony console command.\n");
+    exit(1);
+}
+
+$exitCode = proc_close($process);
+exit($exitCode);
