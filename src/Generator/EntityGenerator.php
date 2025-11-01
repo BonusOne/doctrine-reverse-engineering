@@ -324,7 +324,7 @@ final readonly class EntityGenerator
         $code .= " */\n";
         $code .= 'class '.$className."Repository extends ServiceEntityRepository\n";
         $code .= "{\n";
-        $code .= "    public function __construct(ManagerRegistry {$registry})\n";
+        $code .= "    public function __construct(ManagerRegistry \$registry)\n";
         $code .= "    {\n";
         $code .= '        parent::__construct($registry, '.$className."::class);\n";
         $code .= "    }\n";

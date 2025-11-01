@@ -105,7 +105,10 @@ final class GenerateEntitiesCommand extends Command
         }
 
         $tables = array_values(array_filter(
-            array_map('trim', (array) $input->getOption('table')),
+            array_map(
+                static fn ($value): ?string => \is_string($value) ? trim($value) : null,
+                (array) $input->getOption('table')
+            ),
             static fn (?string $value): bool => $value !== null && $value !== ''
         ));
 
