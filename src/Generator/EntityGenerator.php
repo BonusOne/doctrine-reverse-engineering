@@ -8,7 +8,34 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Index;
+use Doctrine\DBAL\Types\AsciiStringType;
+use Doctrine\DBAL\Types\BigIntType;
+use Doctrine\DBAL\Types\BinaryType;
+use Doctrine\DBAL\Types\BlobType;
+use Doctrine\DBAL\Types\BooleanType;
+use Doctrine\DBAL\Types\DateImmutableType;
+use Doctrine\DBAL\Types\DateIntervalType;
+use Doctrine\DBAL\Types\DateTimeImmutableType;
+use Doctrine\DBAL\Types\DateTimeType;
+use Doctrine\DBAL\Types\DateTimeTzImmutableType;
+use Doctrine\DBAL\Types\DateTimeTzType;
+use Doctrine\DBAL\Types\DateType;
+use Doctrine\DBAL\Types\DecimalType;
+use Doctrine\DBAL\Types\FloatType;
+use Doctrine\DBAL\Types\GuidType;
+use Doctrine\DBAL\Types\IntegerType;
+use Doctrine\DBAL\Types\JsonType;
+use Doctrine\DBAL\Types\ObjectType;
+use Doctrine\DBAL\Types\PhpDateTimeMappingType;
+use Doctrine\DBAL\Types\SimpleArrayType;
+use Doctrine\DBAL\Types\SmallIntType;
+use Doctrine\DBAL\Types\StringType;
+use Doctrine\DBAL\Types\TextType;
+use Doctrine\DBAL\Types\TimeImmutableType;
+use Doctrine\DBAL\Types\TimeType;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\VarDateTimeImmutableType;
+use Doctrine\DBAL\Types\VarDateTimeType;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -477,27 +504,30 @@ final readonly class EntityGenerator
     private function convertDoctrineType(Type $type): string
     {
         return match ($type::class) {
-            \Doctrine\DBAL\Types\BigIntType::class => 'Types::BIGINT',
-            \Doctrine\DBAL\Types\BinaryType::class => 'Types::BINARY',
-            \Doctrine\DBAL\Types\BlobType::class => 'Types::BLOB',
-            \Doctrine\DBAL\Types\BooleanType::class => 'Types::BOOLEAN',
-            \Doctrine\DBAL\Types\DateImmutableType::class,
-            \Doctrine\DBAL\Types\DateTimeImmutableType::class,
-            \Doctrine\DBAL\Types\DateTimeTzImmutableType::class,
-            \Doctrine\DBAL\Types\TimeImmutableType::class,
-            \Doctrine\DBAL\Types\DateTimeType::class,
-            \Doctrine\DBAL\Types\DateTimeTzType::class,
-            \Doctrine\DBAL\Types\DateType::class,
-            \Doctrine\DBAL\Types\TimeType::class => 'Types::DATETIME_IMMUTABLE',
-            \Doctrine\DBAL\Types\DateIntervalType::class => 'Types::DATEINTERVAL',
-            \Doctrine\DBAL\Types\DecimalType::class => 'Types::DECIMAL',
-            \Doctrine\DBAL\Types\FloatType::class => 'Types::FLOAT',
-            \Doctrine\DBAL\Types\GuidType::class => 'Types::GUID',
-            \Doctrine\DBAL\Types\IntegerType::class => 'Types::INTEGER',
-            \Doctrine\DBAL\Types\JsonType::class => 'Types::JSON',
-            \Doctrine\DBAL\Types\SimpleArrayType::class => 'Types::SIMPLE_ARRAY',
-            \Doctrine\DBAL\Types\SmallIntType::class => 'Types::SMALLINT',
-            \Doctrine\DBAL\Types\TextType::class => 'Types::TEXT',
+            BooleanType::class => 'Types::BOOLEAN',
+            BigIntType::class => 'Types::BIGINT',
+            SmallIntType::class => 'Types::SMALLINT',
+            IntegerType::class => 'Types::INTEGER',
+            FloatType::class => 'Types::FLOAT',
+            DecimalType::class => 'Types::DECIMAL',
+            GuidType::class => 'Types::GUID',
+            TextType::class => 'Types::TEXT',
+            AsciiStringType::class => 'Types::ASCII_STRING',
+            JsonType::class => 'Types::JSON',
+            SimpleArrayType::class => 'Types::SIMPLE_ARRAY',
+            BinaryType::class => 'Types::BINARY',
+            BlobType::class => 'Types::BLOB',
+            DateIntervalType::class => 'Types::DATEINTERVAL',
+            DateType::class,
+            DateImmutableType::class => 'Types::DATE_IMMUTABLE',
+            TimeType::class,
+            TimeImmutableType::class => 'Types::TIME_IMMUTABLE',
+            DateTimeType::class,
+            VarDateTimeType::class,
+            DateTimeImmutableType::class,
+            VarDateTimeImmutableType::class => 'Types::DATETIME_IMMUTABLE',
+            DateTimeTzType::class,
+            DateTimeTzImmutableType::class => 'Types::DATETIMETZ_IMMUTABLE',
             default => 'Types::STRING',
         };
     }
@@ -657,24 +687,34 @@ final readonly class EntityGenerator
     private function getPhpDocType(Type $type): string
     {
         return match ($type::class) {
-            \Doctrine\DBAL\Types\BooleanType::class => 'bool',
-            \Doctrine\DBAL\Types\DateImmutableType::class,
-            \Doctrine\DBAL\Types\DateTimeImmutableType::class,
-            \Doctrine\DBAL\Types\DateTimeTzImmutableType::class,
-            \Doctrine\DBAL\Types\TimeImmutableType::class,
-            \Doctrine\DBAL\Types\DateTimeType::class,
-            \Doctrine\DBAL\Types\DateTimeTzType::class,
-            \Doctrine\DBAL\Types\DateType::class,
-            \Doctrine\DBAL\Types\TimeType::class => '\DateTimeImmutable',
-            \Doctrine\DBAL\Types\DateIntervalType::class => '\DateInterval',
-            \Doctrine\DBAL\Types\DecimalType::class,
-            \Doctrine\DBAL\Types\FloatType::class => 'float',
-            \Doctrine\DBAL\Types\BigIntType::class,
-            \Doctrine\DBAL\Types\SmallIntType::class,
-            \Doctrine\DBAL\Types\IntegerType::class => 'int',
-            \Doctrine\DBAL\Types\SimpleArrayType::class,
-            \Doctrine\DBAL\Types\JsonType::class => 'array',
-            default => 'string',
+            BooleanType::class => 'bool',
+            BigIntType::class,
+            SmallIntType::class,
+            IntegerType::class => 'int',
+            FloatType::class => 'float',
+            DecimalType::class => 'string',
+            GuidType::class,
+            TextType::class,
+            StringType::class,
+            AsciiStringType::class => 'string',
+            JsonType::class,
+            SimpleArrayType::class => 'array',
+            ObjectType::class => 'object',
+            BinaryType::class,
+            BlobType::class => 'resource|string',
+            DateIntervalType::class => '\DateInterval',
+            DateType::class,
+            DateImmutableType::class,
+            TimeType::class,
+            TimeImmutableType::class,
+            DateTimeType::class,
+            DateTimeImmutableType::class,
+            DateTimeTzType::class,
+            DateTimeTzImmutableType::class,
+            VarDateTimeType::class,
+            VarDateTimeImmutableType::class,
+            PhpDateTimeMappingType::class => '\DateTimeImmutable',
+            default => 'mixed',
         };
     }
 }
